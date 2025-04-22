@@ -1,23 +1,30 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect, useState } from 'react';
 
 function App() {
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    fetch('http://kuku-crafts-cooking.local/wp-json/wp/v2/posts')
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! Status: ${res.status}`);
+        }
+        return res.json();
+      })
+      .then((data) => setPosts(data))
+      .catch((err) => console.error('Error fetching posts:', err));
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div style={{ padding: '2rem' }}>
+      <h1>My Dog Blog 🐶</h1>
+      {posts.length === 0 && <p>Loading...</p>}
+      {posts.map((post) => (
+        <div key={post.id} style={{ marginBottom: '2rem' }}>
+          <h2 dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
+          <div dangerouslySetInnerHTML={{ __html: post.content.rendered }} />
+        </div>
+      ))}
     </div>
   );
 }
