@@ -1,7 +1,5 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
 # dependencies
-/node_modules
+/react-app/node_modules
 /.pnp
 .pnp.js
 
@@ -21,3 +19,39 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# WordPress core & runtime artifacts
+advanced-cache.php
+object-cache.php
+uploads/
+cache/
+upgrade/
+# Build artifacts
+react-app/build/
+# IDE stuff
+*.log
+
+# Ignore default WP core themes
+themes/twentyeleven/
+themes/twentytwelve/
+themes/twentythirteen/
+themes/twentyfourteen/
+themes/twentyfifteen/
+themes/twentysixteen/
+themes/twentyseventeen/
+themes/twentyeighteen/
+themes/twentynineteen/
+themes/twentytwenty/
+themes/twentytwentyone/
+themes/twentytwentytwo/
+themes/twentytwentythree/
+themes/twentytwentyfour/
+themes/twentytwentyfive/
+
+# WordPress root index & core files
+/index.php
+/license.txt
+/readme.html
+# Ignore WP directory stubs
+plugins/index.php
+themes/index.php
