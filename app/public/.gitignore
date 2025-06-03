@@ -1,58 +1,62 @@
-# dependencies
-/react-app/node_modules
-/.pnp
+# Node/React dependencies
+react-app/node_modules/
+.pnp/
 .pnp.js
 
-# testing
+# Testing
 /coverage
 
-# production
-/build
+# React build artifacts
+/react-app/build/
+/react-app/.next/
+/build/
 
-# misc
+# Misc
 .DS_Store
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
-
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# WordPress core & runtime artifacts
+# Logs
+*.log
+
+# WordPress runtime artifacts
 advanced-cache.php
 object-cache.php
 uploads/
 cache/
 upgrade/
+
+
+# Only track wp-content/; ignore everything else in WP core
+/*
+!wp-content/
+!docker-compose.yml
+
+# Ignore default WP core themes (inside wp-content)
+wp-content/themes/twentyeleven/
+wp-content/themes/twentytwelve/
+wp-content/themes/twentythirteen/
+wp-content/themes/twentyfourteen/
+wp-content/themes/twentyfifteen/
+wp-content/themes/twentysixteen/
+wp-content/themes/twentyseventeen/
+wp-content/themes/twentyeighteen/
+wp-content/themes/twentynineteen/
+wp-content/themes/twentytwenty/
+wp-content/themes/twentytwentyone/
+wp-content/themes/twentytwentytwo/
+wp-content/themes/twentytwentythree/
+wp-content/themes/twentytwentyfour/
+wp-content/themes/twentytwentyfive/
+wp-content/plugins/query-monitor
 # Build artifacts
-react-app/build/
-themes/kuku-child/react-build/
-# IDE stuff
-*.log
+wp-content/themes/kuku-child/react-build/
 
-# Ignore default WP core themes
-themes/twentyeleven/
-themes/twentytwelve/
-themes/twentythirteen/
-themes/twentyfourteen/
-themes/twentyfifteen/
-themes/twentysixteen/
-themes/twentyseventeen/
-themes/twentyeighteen/
-themes/twentynineteen/
-themes/twentytwenty/
-themes/twentytwentyone/
-themes/twentytwentytwo/
-themes/twentytwentythree/
-themes/twentytwentyfour/
-themes/twentytwentyfive/
-
-# WordPress root index & core files
-/index.php
-/license.txt
-/readme.html
-# Ignore WP directory stubs
-plugins/index.php
-themes/index.php
+# WP directory stubs (inside wp-content)
+wp-content/plugins/index.php
+wp-content/themes/index.php

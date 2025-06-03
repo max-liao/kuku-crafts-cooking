@@ -1,0 +1,1 @@
+/home/max/Local Sites/kuku-crafts-cooking/app/public/wp-content/plugins/query-monitor/wp-content/db.php
