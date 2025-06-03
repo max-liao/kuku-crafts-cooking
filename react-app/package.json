@@ -15,7 +15,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && rsync -a build/ ../themes/kuku-child/react-build/",
+    "build": "react-scripts build && mkdir -p ../themes/kuku-child/react-build && rsync -a build/ ../themes/kuku-child/react-build/",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

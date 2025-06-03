@@ -28,6 +28,7 @@ cache/
 upgrade/
 # Build artifacts
 react-app/build/
+themes/kuku-child/react-build/
 # IDE stuff
 *.log
 
