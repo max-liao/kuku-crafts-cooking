@@ -45,4 +45,19 @@ function kuku_enqueue_react() {
         );
     }
 }
+
 add_action( 'wp_enqueue_scripts', 'kuku_enqueue_react' );
+function kuku_register_pinecone_block() {
+  // Load dependencies and version from the built asset file
+  $asset_file = include( get_theme_file_path( 'build/pine-cone-block/index.asset.php' ) );
+
+  wp_register_script(
+    'kuku-pinecone-block',
+    get_theme_file_uri( 'build/pine-cone-block/index.js' ),
+    $asset_file['dependencies'],
+    $asset_file['version']
+  );
+
+  register_block_type( get_theme_file_path( 'build/pine-cone-block' ) );
+}
+add_action( 'init', 'kuku_register_pinecone_block' );

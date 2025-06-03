@@ -5,7 +5,7 @@
 !README.md
 
 # Node/React dependencies
-wp-content/react-app/node_modules/
+**/node_modules/
 .pnp/
 .pnp.js
 

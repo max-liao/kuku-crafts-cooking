@@ -1,0 +1,12 @@
+{
+  "apiVersion": 2,
+  "name": "kuku/pine-cone-block",
+  "title": "Pine Cone Block",
+  "category": "widgets",
+  "icon": "smiley",
+  "description": "A custom block that renders a pine cone image.",
+  "supports": {
+    "html": false
+  },
+  "editorScript": "file:./index.js"
+}
