@@ -1,5 +1,11 @@
+# Only track wp-content/; ignore everything else in WP core
+/*
+!wp-content/
+!docker-compose.yml
+!README.md
+
 # Node/React dependencies
-react-app/node_modules/
+wp-content/react-app/node_modules/
 .pnp/
 .pnp.js
 
@@ -31,11 +37,6 @@ uploads/
 cache/
 upgrade/
 
-
-# Only track wp-content/; ignore everything else in WP core
-/*
-!wp-content/
-!docker-compose.yml
 
 # Ignore default WP core themes (inside wp-content)
 wp-content/themes/twentyeleven/
