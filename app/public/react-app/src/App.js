@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import PineConeOfTheDay from './components/PineconeOfTheDay.js';
 
 function App() {
   const [posts, setPosts] = useState([]);
@@ -25,6 +26,7 @@ function App() {
           <div dangerouslySetInnerHTML={{ __html: post.content.rendered }} />
         </div>
       ))}
+      <PineConeOfTheDay />
     </div>
   );
 }
