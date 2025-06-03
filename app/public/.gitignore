@@ -13,7 +13,7 @@ wp-content/react-app/node_modules/
 /coverage
 
 # React build artifacts
-/react-app/build/
+wp-content/react-app/build/
 /react-app/.next/
 /build/
 
@@ -38,6 +38,9 @@ cache/
 upgrade/
 
 
+# Plugins
+wp-content/plugins/query-monitor
+wp-content/plugins/redis-cache
 # Ignore default WP core themes (inside wp-content)
 wp-content/themes/twentyeleven/
 wp-content/themes/twentytwelve/
@@ -54,7 +57,6 @@ wp-content/themes/twentytwentytwo/
 wp-content/themes/twentytwentythree/
 wp-content/themes/twentytwentyfour/
 wp-content/themes/twentytwentyfive/
-wp-content/plugins/query-monitor
 # Build artifacts
 wp-content/themes/kuku-child/react-build/
 
