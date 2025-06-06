@@ -61,3 +61,15 @@ function kuku_register_pinecone_block() {
   register_block_type( get_theme_file_path( 'build/pine-cone-block' ) );
 }
 add_action( 'init', 'kuku_register_pinecone_block' );
+
+// Register the REST endpoint
+add_action('rest_api_init', function() {
+    register_rest_route('myplugin/v1', '/update-sheet/', array(
+        'methods' => 'POST',
+        'callback' => 'myplugin_update_sheet_callback',
+        'permission_callback' => function() {
+            // Application Passwords handle authentication, so allow if logged in
+            return current_user_can('edit_posts');
+        },
+    ));
+});
