@@ -1,75 +1,126 @@
 <?php
 /**
- * Kuku Child Theme Functions
- *
- * Enqueues the React app bundles on the “Performance Test – Pine Cone” page,
- * using the hashed filenames from asset-manifest.json.
+ * Kuku Child Theme – functions.php
  */
 
+/* --------------------------------------------------
+ * 1. Load child-theme stylesheet
+ * -------------------------------------------------- */
+add_action( 'wp_enqueue_scripts', function () {
+    wp_enqueue_style(
+        'kuku-child-style',          // handle
+        get_stylesheet_uri(),        // /kuku-child/style.css
+        [],                          // no deps; loads after parent because of priority 20
+        wp_get_theme()->get( 'Version' )
+    );
+}, 20 ); // priority 20 ➜ after parent theme styles
+
+
+/* --------------------------------------------------
+ * 2. Enqueue React bundles on the Pine-Cone page
+ * -------------------------------------------------- */
 function kuku_enqueue_react() {
-    // Only load on the specific page slug
+
     if ( ! is_page( 'performance-test-pine-cone' ) ) {
         return;
     }
 
-    // Path to the manifest file
     $manifest_path = get_stylesheet_directory() . '/react-build/asset-manifest.json';
     if ( ! file_exists( $manifest_path ) ) {
         return;
     }
 
-    // Decode the manifest
     $manifest = json_decode( file_get_contents( $manifest_path ), true );
-    if ( ! isset( $manifest['files']['main.js'] ) ) {
+    if ( empty( $manifest['files']['main.js'] ) ) {
         return;
     }
 
-    // Enqueue the JS bundle (manifest already has the full WP-relative URL)
-    $main_js = $manifest['files']['main.js'];
+    // JS bundle
     wp_enqueue_script(
         'kuku-react-app',
-        esc_url( $main_js ),  // e.g. "/wp-content/themes/kuku-child/react-build/static/js/main.69396cde.js"
-        array(),
+        esc_url( $manifest['files']['main.js'] ),
+        [],
         null,
         true
     );
 
-    // Enqueue the CSS bundle if it exists
-    if ( isset( $manifest['files']['main.css'] ) ) {
-        $main_css = $manifest['files']['main.css'];
+    // CSS bundle (optional)
+    if ( ! empty( $manifest['files']['main.css'] ) ) {
         wp_enqueue_style(
             'kuku-react-css',
-            esc_url( $main_css ),  // e.g. "/wp-content/themes/kuku-child/react-build/static/css/main.e6c13ad2.css"
-            array(),
+            esc_url( $manifest['files']['main.css'] ),
+            [],
             null
         );
     }
 }
-
 add_action( 'wp_enqueue_scripts', 'kuku_enqueue_react' );
+
+
+/* --------------------------------------------------
+ * 3. Register custom Pine-Cone block
+ * -------------------------------------------------- */
 function kuku_register_pinecone_block() {
-  // Load dependencies and version from the built asset file
-  $asset_file = include( get_theme_file_path( 'build/pine-cone-block/index.asset.php' ) );
 
-  wp_register_script(
-    'kuku-pinecone-block',
-    get_theme_file_uri( 'build/pine-cone-block/index.js' ),
-    $asset_file['dependencies'],
-    $asset_file['version']
-  );
+    $asset_file = include get_theme_file_path( 'build/pine-cone-block/index.asset.php' );
 
-  register_block_type( get_theme_file_path( 'build/pine-cone-block' ) );
+    wp_register_script(
+        'kuku-pinecone-block',
+        get_theme_file_uri( 'build/pine-cone-block/index.js' ),
+        $asset_file['dependencies'],
+        $asset_file['version']
+    );
+
+    register_block_type( get_theme_file_path( 'build/pine-cone-block' ) );
 }
 add_action( 'init', 'kuku_register_pinecone_block' );
 
-// Register the REST endpoint
-add_action('rest_api_init', function() {
-    register_rest_route('myplugin/v1', '/update-sheet/', array(
-        'methods' => 'POST',
-        'callback' => 'myplugin_update_sheet_callback',
-        'permission_callback' => function() {
-            // Application Passwords handle authentication, so allow if logged in
-            return current_user_can('edit_posts');
+
+/* --------------------------------------------------
+ * 4. Simple REST endpoint for sheet update
+ * -------------------------------------------------- */
+add_action( 'rest_api_init', function () {
+    register_rest_route( 'myplugin/v1', '/update-sheet/', [
+        'methods'             => 'POST',
+        'callback'            => 'myplugin_update_sheet_callback',
+        'permission_callback' => function () {
+            return current_user_can( 'edit_posts' );
         },
-    ));
-});
+    ] );
+} );
+
+
+/* --------------------------------------------------
+ * 5. Enqueue dark-mode toggle script
+ * -------------------------------------------------- */
+add_action( 'wp_enqueue_scripts', function () {
+    wp_enqueue_script(
+        'kuku-color-toggle',
+        get_stylesheet_directory_uri() . '/js/color-toggle.js',
+        [],
+        wp_get_theme()->get( 'Version' ),
+        true
+    );
+} );
+
+
+/* --------------------------------------------------
+ * 6. Inline CSS that overrides TT25 global styles in dark mode
+ * -------------------------------------------------- */
+add_action( 'wp_head', function () { ?>
+    <style id="kuku-dark-mode">
+        body.dark-mode{
+            --wp--preset--color--base:#121212;
+            --wp--preset--color--contrast:#e5e5e5;
+            --wp--preset--color--primary:#8ab4ff;
+            background-color:#121212!important;
+            color:#e5e5e5!important;
+        }
+        body.dark-mode a{color:var(--wp--preset--color--primary)!important;}
+        body.dark-mode hr,
+        body.dark-mode input,
+        body.dark-mode textarea{border-color:#333!important;}
+        body.dark-mode .custom-logo-link img{border:2px solid #333;}
+    </style>
+<?php
+}, 100 );   // run after global-styles inline block
