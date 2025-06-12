@@ -34,7 +34,7 @@ function kuku_fetch_random_pinecone() {
   $random_image = $images[array_rand($images)];
   error_log('🌲 Randomly selected image: ' . $random_image);
 
-  $url = get_stylesheet_directory_uri() . '/assets/pinecones/' . basename($random_image);
+  $url = str_replace('http://', 'https://', get_stylesheet_directory_uri()) . '/assets/pinecones/' . basename($random_image);
   error_log('✅ Local pinecone image URL: ' . $url);
 
   return $url;

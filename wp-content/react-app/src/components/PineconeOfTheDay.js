@@ -2,17 +2,28 @@ import { useEffect, useState } from "react";
 
 function PineConeOfTheDay() {
   const [pineconeUrl, setPineconeUrl] = useState("");
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    fetch("/wp-json/kuku/v1/pinecone")
-      .then((res) => res.json())
+    const apiUrl = `${window.location.origin}/wp-json/kuku/v1/pinecone`;
+
+    fetch(apiUrl)
+      .then((res) => {
+        if (!res.ok) throw new Error("API response error");
+        return res.json();
+      })
       .then((data) => {
-        console.log("Pinecone URL:", data);
+        console.log("🌲 Pinecone URL:", data);
         setPineconeUrl(data);
+      })
+      .catch((err) => {
+        console.error("❌ Failed to fetch pinecone:", err);
+        setError(true);
       });
   }, []);
 
-  if (!pineconeUrl) return <p>Loading...</p>;
+  if (error) return <p>Could not load today's pine cone 🌧️</p>;
+  if (!pineconeUrl) return <p>Loading Pine Cone of the Day...</p>;
 
   return (
     <div>
