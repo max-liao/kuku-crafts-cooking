@@ -39,6 +39,8 @@ upgrade/
 
 
 # Plugins
+wp-content/ai1wm-backups
+wp-content/plugins/all-in-one-wp-migration
 wp-content/plugins/query-monitor
 wp-content/plugins/redis-cache
 # Ignore default WP core themes (inside wp-content)

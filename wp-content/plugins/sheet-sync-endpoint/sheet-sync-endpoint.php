@@ -2,14 +2,14 @@
 /**
  * Plugin Name: Sheet Sync Endpoint
  * Description: Adds a custom REST endpoint to receive data from Google Sheets.
- * Version: 1.0
+ * Version: 1.1
  * Author: Your Name
  */
 
 add_action( 'rest_api_init', 'myplugin_register_rest_endpoint' );
 
 /**
- * Register  /wp-json/myplugin/v1/update-sheet/  (POST)
+ * Register /wp-json/myplugin/v1/update-sheet/ (POST)
  */
 function myplugin_register_rest_endpoint() {
     register_rest_route(
@@ -32,9 +32,6 @@ function myplugin_permission_check() {
 
 /**
  * Handle the incoming Sheet payload.
- *
- * @param mixed $request  The REST request object (no class type-hint here!).
- * @return WP_REST_Response|WP_Error
  */
 function myplugin_update_sheet_callback( $request ) {
     global $wpdb;
@@ -53,7 +50,6 @@ function myplugin_update_sheet_callback( $request ) {
     $inserted = 0;
 
     foreach ( $rows as $row ) {
-        // Insert each row as JSON
         $wpdb->insert(
             $table_name,
             array( 'data' => wp_json_encode( $row ) ),
@@ -70,7 +66,7 @@ function myplugin_update_sheet_callback( $request ) {
     );
 }
 
-// Hook to create table on activation
+// Create table on plugin activation
 register_activation_hook( __FILE__, 'myplugin_create_table' );
 
 function myplugin_create_table() {
@@ -78,7 +74,6 @@ function myplugin_create_table() {
     $table_name = $wpdb->prefix . 'sheet_data';
     $charset_collate = $wpdb->get_charset_collate();
 
-    // Table schema: id (auto), data (JSON), created_at
     $sql = "CREATE TABLE IF NOT EXISTS $table_name (
         id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
         data LONGTEXT NOT NULL,
@@ -88,4 +83,41 @@ function myplugin_create_table() {
 
     require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
     dbDelta( $sql );
+}
+
+// ✅ Shortcode: [show_sheet_data]
+add_shortcode('show_sheet_data', 'myplugin_render_sheet_data');
+
+function myplugin_render_sheet_data() {
+    global $wpdb;
+    $table = $wpdb->prefix . 'sheet_data';
+
+    // Get the latest 10 rows
+    $rows = $wpdb->get_results("SELECT data, created_at FROM $table ORDER BY created_at DESC LIMIT 10", ARRAY_A);
+    if ( empty( $rows ) ) {
+        return '<p>No data found.</p>';
+    }
+
+    $output = '<table border="1" cellpadding="6" style="border-collapse: collapse; width: 100%;">';
+    $output .= '<thead><tr>';
+
+    // Extract keys from first row
+    $first_row_data = json_decode( $rows[0]['data'], true );
+    foreach ( array_keys( $first_row_data ) as $key ) {
+        $output .= '<th>' . esc_html( $key ) . '</th>';
+    }
+    $output .= '<th>Created At</th></tr></thead><tbody>';
+
+    foreach ( $rows as $row ) {
+        $data = json_decode( $row['data'], true );
+        $output .= '<tr>';
+        foreach ( $first_row_data as $key => $_ ) {
+            $output .= '<td>' . esc_html( $data[ $key ] ?? '' ) . '</td>';
+        }
+        $output .= '<td>' . esc_html( $row['created_at'] ) . '</td>';
+        $output .= '</tr>';
+    }
+
+    $output .= '</tbody></table>';
+    return $output;
 }
