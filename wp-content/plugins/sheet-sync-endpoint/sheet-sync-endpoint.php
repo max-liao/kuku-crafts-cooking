@@ -49,6 +49,9 @@ function myplugin_update_sheet_callback( $request ) {
     $rows = $params['rows'];
     $inserted = 0;
 
+    // Clear old data before inserting new sheet rows
+    $wpdb->query("DELETE FROM $table_name");
+
     foreach ( $rows as $row ) {
         $wpdb->insert(
             $table_name,
@@ -85,39 +88,59 @@ function myplugin_create_table() {
     dbDelta( $sql );
 }
 
-// ✅ Shortcode: [show_sheet_data]
+// Shortcode: [show_sheet_data]
 add_shortcode('show_sheet_data', 'myplugin_render_sheet_data');
-
 function myplugin_render_sheet_data() {
     global $wpdb;
     $table = $wpdb->prefix . 'sheet_data';
 
-    // Get the latest 10 rows
-    $rows = $wpdb->get_results("SELECT data, created_at FROM $table ORDER BY created_at DESC LIMIT 10", ARRAY_A);
+    // Fetch all rows from the table, oldest first
+    $rows = $wpdb->get_results("SELECT data, created_at FROM $table ORDER BY id ASC", ARRAY_A);
+
+    // If no data found, return a message
     if ( empty( $rows ) ) {
         return '<p>No data found.</p>';
     }
 
+    // Start building the HTML table
     $output = '<table border="1" cellpadding="6" style="border-collapse: collapse; width: 100%;">';
     $output .= '<thead><tr>';
 
-    // Extract keys from first row
+    // Add row number header
+    $output .= '<th>#</th>';
+
+    // Get column headers from the first row of data
     $first_row_data = json_decode( $rows[0]['data'], true );
     foreach ( array_keys( $first_row_data ) as $key ) {
         $output .= '<th>' . esc_html( $key ) . '</th>';
     }
+
+    // Add "Created At" column header
     $output .= '<th>Created At</th></tr></thead><tbody>';
 
+    // Initialize row counter
+    $row_num = 1;
+
+    // Loop through each row in the database
     foreach ( $rows as $row ) {
         $data = json_decode( $row['data'], true );
+
         $output .= '<tr>';
+
+        // Add row number column
+        $output .= '<td>' . $row_num++ . '</td>';
+
+        // Output each column in the same order as the header
         foreach ( $first_row_data as $key => $_ ) {
             $output .= '<td>' . esc_html( $data[ $key ] ?? '' ) . '</td>';
         }
+
+        // Add created_at timestamp
         $output .= '<td>' . esc_html( $row['created_at'] ) . '</td>';
         $output .= '</tr>';
     }
 
     $output .= '</tbody></table>';
+
     return $output;
 }
