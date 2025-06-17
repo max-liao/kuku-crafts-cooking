@@ -18,26 +18,36 @@ add_action('rest_api_init', function () {
   ]);
 });
 
+/**
+ * Fetches a random pine cone image from the local assets folder.
+ * If no images are found, returns a default image URL.
+ *
+ * @return string URL of the selected pine cone image.
+ */
 function kuku_fetch_random_pinecone() {
-  // ✅ Use get_stylesheet_directory for active child theme
-  $image_dir = get_stylesheet_directory() . '/assets/pinecones/';
-  error_log('📁 Image directory path: ' . $image_dir);
+    // Directory containing pine cone images in the active child theme
+    $image_dir = get_stylesheet_directory() . '/assets/pinecones/';
+    error_log('📁 Image directory path: ' . $image_dir);
 
-  $images = glob($image_dir . '*.{jpg,png,jpeg}', GLOB_BRACE);
-  error_log('🖼️ Found images: ' . print_r($images, true));
+    // Get all image files with the specified extensions
+    $images = glob($image_dir . '*.{jpg,png,jpeg}', GLOB_BRACE);
+    error_log('🖼️ Found images: ' . print_r($images, true));
 
-  if (!$images || count($images) === 0) {
-    error_log('🟡 No pinecone images found in local assets folder.');
-    return 'https://media.istockphoto.com/id/505688040/photo/beautiful-fir-cone-isolated.jpg?s=612x612&w=0&k=20&c=g4SXX83g7pDO1792fXln9w3ypmOtG1a_B2ywpUDhxYo=';
-  }
+    // If no images are found, return a default image URL
+    if (!$images || count($images) === 0) {
+        error_log('🟡 No pinecone images found in local assets folder.');
+        return 'https://media.istockphoto.com/id/505688040/photo/beautiful-fir-cone-isolated.jpg?s=612x612&w=0&k=20&c=g4SXX83g7pDO1792fXln9w3ypmOtG1a_B2ywpUDhxYo=';
+    }
 
-  $random_image = $images[array_rand($images)];
-  error_log('🌲 Randomly selected image: ' . $random_image);
+    // Randomly select an image from the list
+    $random_image = $images[array_rand($images)];
+    error_log('🌲 Randomly selected image: ' . $random_image);
 
-  $url = str_replace('http://', 'https://', get_stylesheet_directory_uri()) . '/assets/pinecones/' . basename($random_image);
-  error_log('✅ Local pinecone image URL: ' . $url);
+    // Construct the URL for the selected image
+    $url = str_replace('http://', 'https://', get_stylesheet_directory_uri()) . '/assets/pinecones/' . basename($random_image);
+    error_log('Local pinecone image URL: ' . $url);
 
-  return $url;
+    return $url;
 }
 
 // Save to option table daily
@@ -46,7 +56,7 @@ add_action('kuku_daily_event', function () {
   update_option('kuku_daily_pinecone', $pinecone_url);
 });
 
-// ✅ Schedule cron events *after WP is fully loaded*
+// Schedule cron events *after WP is fully loaded*
 add_action('init', function () {
   if (!wp_next_scheduled('kuku_daily_event')) {
     wp_schedule_event(time(), 'daily', 'kuku_daily_event');
