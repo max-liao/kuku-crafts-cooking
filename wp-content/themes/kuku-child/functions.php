@@ -4,64 +4,90 @@
  */
 
 /* --------------------------------------------------
+ * 0. Ensure type="module" for Vite JS
+ * -------------------------------------------------- */
+add_filter( 'script_loader_tag', function ( $tag, $handle, $src ) {
+    return $handle === 'kuku-react-bundle'
+        ? "<script type=\"module\" src=\"$src\"></script>"
+        : $tag;
+}, 10, 3);
+
+
+/* --------------------------------------------------
  * 1. Load child-theme stylesheet
  * -------------------------------------------------- */
 add_action( 'wp_enqueue_scripts', function () {
     wp_enqueue_style(
-        'kuku-child-style',          // handle
-        get_stylesheet_uri(),        // /kuku-child/style.css
-        [],                          // no deps; loads after parent because of priority 20
+        'kuku-child-style',
+        get_stylesheet_uri(),
+        [],
         wp_get_theme()->get( 'Version' )
     );
-}, 20 ); // priority 20 ➜ after parent theme styles
+}, 20 );
 
 
 /* --------------------------------------------------
  * 2. Enqueue React bundles on the Pine-Cone page
  * -------------------------------------------------- */
 function kuku_enqueue_react() {
+    $manifest_path = get_stylesheet_directory() . '/react-build/manifest.json';
+    $manifest_uri  = get_stylesheet_directory_uri() . '/react-build';
 
-    if ( ! is_page( 'performance-test-pine-cone' ) ) {
+    error_log("✅ Reached kuku_enqueue_react");
+    error_log("📄 Manifest path: $manifest_path");
+
+    if (!file_exists($manifest_path)) {
+        error_log("❌ Manifest not found");
         return;
     }
 
-    $manifest_path = get_stylesheet_directory() . '/react-build/asset-manifest.json';
-    if ( ! file_exists( $manifest_path ) ) {
+    $manifest = json_decode(file_get_contents($manifest_path), true);
+    if (!$manifest) {
+        error_log("❌ Failed to decode manifest");
         return;
     }
 
-    $manifest = json_decode( file_get_contents( $manifest_path ), true );
-    if ( empty( $manifest['files']['main.js'] ) ) {
+    $entry = reset($manifest);
+    if (!$entry || empty($entry['file'])) {
+        error_log("❌ No JS file found in manifest");
         return;
     }
 
-    // JS bundle
+    error_log("📦 Enqueuing JS file: " . $entry['file']);
+
     wp_enqueue_script(
-        'kuku-react-app',
-        esc_url( $manifest['files']['main.js'] ),
+        'kuku-react-bundle',
+        $manifest_uri . '/' . $entry['file'],
         [],
         null,
         true
     );
 
-    // CSS bundle (optional)
-    if ( ! empty( $manifest['files']['main.css'] ) ) {
-        wp_enqueue_style(
-            'kuku-react-css',
-            esc_url( $manifest['files']['main.css'] ),
-            [],
-            null
-        );
+    add_filter('script_loader_tag', function ($tag, $handle, $src) {
+        return $handle === 'kuku-react-bundle'
+            ? "<script type=\"module\" src=\"$src\"></script>"
+            : $tag;
+    }, 10, 3);
+
+    if (!empty($entry['css'])) {
+        foreach ($entry['css'] as $css_file) {
+            error_log("🎨 Enqueuing CSS file: $css_file");
+            wp_enqueue_style(
+                'kuku-react-style',
+                $manifest_uri . '/' . $css_file,
+                [],
+                null
+            );
+        }
     }
 }
-add_action( 'wp_enqueue_scripts', 'kuku_enqueue_react' );
+add_action('wp_enqueue_scripts', 'kuku_enqueue_react');
 
 
 /* --------------------------------------------------
  * 3. Register custom Pine-Cone block
  * -------------------------------------------------- */
 function kuku_register_pinecone_block() {
-
     $asset_file = include get_theme_file_path( 'build/pine-cone-block/index.asset.php' );
 
     wp_register_script(
@@ -80,7 +106,7 @@ add_action( 'init', 'kuku_register_pinecone_block' );
  * 4. Simple REST endpoint for sheet update
  * -------------------------------------------------- */
 add_action( 'rest_api_init', function () {
-    register_rest_route( 'myplugin/v1', '/update-sheet/', [
+    register_rest_route( 'google_sheets_plugin/v1', '/update-sheet/', [
         'methods'             => 'POST',
         'callback'            => 'myplugin_update_sheet_callback',
         'permission_callback' => function () {
@@ -123,4 +149,13 @@ add_action( 'wp_head', function () { ?>
         body.dark-mode .custom-logo-link img{border:2px solid #333;}
     </style>
 <?php
-}, 100 );   // run after global-styles inline block
+}, 100 );
+
+
+/* --------------------------------------------------
+ * 7. Confirm footer reached
+ * -------------------------------------------------- */
+add_action('wp_footer', function () {
+    echo '<script>console.log("✅ React script reached WordPress");</script>';
+});
+error_log("🧠 functions.php finished loading at " . current_time('mysql'));

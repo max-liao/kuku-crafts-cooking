@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import PineConeOfTheDay from "./components/PineconeOfTheDay.js";
+import PineConeOfTheDay from "./components/PineconeOfTheDay";
 
 function App() {
   const [posts, setPosts] = useState([]);
