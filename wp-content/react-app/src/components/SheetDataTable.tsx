@@ -42,42 +42,50 @@ const SheetDataTable: React.FC<Props> = ({ endpoint }) => {
     <div>
       <style>
         {`
-        .sheet-table-wrapper {
-          position: relative;
-          width: 90vw;
-          left: 50%;
-          transform: translateX(-50%);
-          overflow-x: auto;
-          padding: 1rem 0;
-        }
+          .sheet-table-wrapper {
+            position: relative;
+            width: 90vw;
+            left: 50%;
+            transform: translateX(-50%);
+            overflow: auto;
+            max-height: 80vh;
+            padding: 1rem 0;
+          }
 
-        .styled-sheet-table {
-          width: 100%;
-          border-collapse: collapse;
-          table-layout: auto;
-        }
+          .styled-sheet-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: auto;
+          }
 
-        .styled-sheet-table thead th {
-          position: sticky;
-          top: 0;
-          background: white;
-          z-index: 100;
-        }
+          .styled-sheet-table thead th {
+            position: sticky;
+            top: 0;
+            background: var(--color-bg); /* use theme var */
+            z-index: 100;
+          }
 
-        .styled-sheet-table tbody tr:nth-child(odd) {
-          background-color: #f7faff;
-        }
+          .styled-sheet-table tbody tr:nth-child(odd) {
+            background-color: #f7faff;
+          }
 
-        .styled-sheet-table th:first-child,
-        .styled-sheet-table td:first-child {
-          position: sticky;
-          left: 0;
-          background: white;
-          z-index: 30;
-        }
-      `}
+          body.dark-mode .styled-sheet-table tbody tr:nth-child(odd) {
+            background-color: #1a1a1a; /* dark zebra */
+          }
+
+          .styled-sheet-table th:first-child,
+          .styled-sheet-table td:first-child {
+            position: sticky;
+            left: 0;
+            background: var(--color-bg);
+            z-index: 101;
+          }
+
+          .styled-sheet-table thead th:first-child {
+            z-index: 102;
+          }
+        `}
       </style>
-
       <div className="sheet-table-wrapper">
         <table className="styled-sheet-table" border={1} cellPadding={6}>
           <thead>
