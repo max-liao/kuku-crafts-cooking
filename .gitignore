@@ -1,67 +1,50 @@
-# Only track wp-content/; ignore everything else in WP core
-/*
-!wp-content/
-!docker-compose.yml
+# Ignore everything by default
+*
+
+# Allow top-level files
+!.gitignore
 !README.md
+!docker-compose.yml
 
-# Node/React dependencies
+# Allow React app, including Dockerfile
+!app/public/wp-content/react-app/
+!app/public/wp-content/react-app/**
+
+# ✅ Explicitly allow Dockerfile (fixes your issue)
+!app/public/wp-content/react-app/Dockerfile
+
+# Same for deploy script
+!app/public/wp-content/react-app/deploy-react.sh
+
+# Allow your plugin
+!app/public/wp-content/plugins/kuku-pinecone-of-the-day/
+!app/public/wp-content/plugins/kuku-pinecone-of-the-day/**
+
+# Allow your custom theme
+!app/public/wp-content/themes/kuku-child/
+!app/public/wp-content/themes/kuku-child/**
+
+# Allow minimal WP scaffolding
+!app/public/wp-content/db.php
+!app/public/wp-content/index.php
+
+# Exclude unnecessary files/folders
 **/node_modules/
-.pnp/
-.pnp.js
-
-# Testing
-/coverage
-
-# React build artifacts
-wp-content/react-app/build/
-/react-app/.next/
-/build/
-
-# Misc
-.DS_Store
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Logs
+**/.pnp/
+**/.pnp.js
+**/coverage/
+**/.next/
+**/build/
+**/.env*
+**/uploads/
+**/cache/
+**/upgrade/
+**/advanced-cache.php
+**/object-cache.php
 *.log
 
-# WordPress runtime artifacts
-advanced-cache.php
-object-cache.php
-uploads/
-cache/
-upgrade/
-
-
-# Plugins
-wp-content/ai1wm-backups
-wp-content/plugins/all-in-one-wp-migration
-wp-content/plugins/query-monitor
-wp-content/plugins/redis-cache
-# Ignore default WP core themes (inside wp-content)
-wp-content/themes/twentyeleven/
-wp-content/themes/twentytwelve/
-wp-content/themes/twentythirteen/
-wp-content/themes/twentyfourteen/
-wp-content/themes/twentyfifteen/
-wp-content/themes/twentysixteen/
-wp-content/themes/twentyseventeen/
-wp-content/themes/twentyeighteen/
-wp-content/themes/twentynineteen/
-wp-content/themes/twentytwenty/
-wp-content/themes/twentytwentyone/
-wp-content/themes/twentytwentytwo/
-wp-content/themes/twentytwentythree/
-wp-content/themes/twentytwentyfour/
-wp-content/themes/twentytwentyfive/
-# Build artifacts
-wp-content/themes/kuku-child/react-build/
-
-# WP directory stubs (inside wp-content)
-wp-content/plugins/index.php
-wp-content/themes/index.php
+# Ignore common bundled WP plugins and themes
+**/wp-content/plugins/all-in-one-wp-migration/
+**/wp-content/plugins/query-monitor/
+**/wp-content/plugins/redis-cache/
+**/wp-content/themes/twenty*/
