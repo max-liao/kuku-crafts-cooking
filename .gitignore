@@ -6,12 +6,20 @@
 !README.md
 !docker-compose.yml
 
+# Allow GitHub Actions workflows
+!.github/
+!.github/**
+
+# Allow parent directories explicitly
+!app/
+!app/public/
+!app/public/wp-content/
+!app/public/wp-content/react-app/
+!app/public/wp-content/react-app/Dockerfile
+
 # Allow React app, including Dockerfile
 !app/public/wp-content/react-app/
 !app/public/wp-content/react-app/**
-
-# ✅ Explicitly allow Dockerfile (fixes your issue)
-!app/public/wp-content/react-app/Dockerfile
 
 # Same for deploy script
 !app/public/wp-content/react-app/deploy-react.sh
