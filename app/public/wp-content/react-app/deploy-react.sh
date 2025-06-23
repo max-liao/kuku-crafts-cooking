@@ -7,8 +7,8 @@ PEM_PATH="$HOME/.ssh/LightsailDefaultKey-us-east-2.pem"
 REMOTE_USER="bitnami"
 
 LOCAL_BUILD_DIR="../themes/kuku-child/react-build"          # where Vite writes
-LOCAL_FUNCTIONS_PHP="../themes/kuku-child/functions.php"    # ← add this
-REMOTE_TEMP="/home/bitnami/react-build-temp"                # no sudo needed
+LOCAL_FUNCTIONS_PHP="../themes/kuku-child/functions.php"    
+REMOTE_TEMP="/home/bitnami/react-build-temp"                
 REMOTE_DEST="/opt/bitnami/wordpress/wp-content/themes/kuku-child/react-build"
 REMOTE_FUNCTIONS_PATH="/opt/bitnami/wordpress/wp-content/themes/kuku-child/functions.php"
 # ──────────────────────────────────────────────────────────

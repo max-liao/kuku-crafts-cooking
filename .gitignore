@@ -1,58 +1,47 @@
-# Ignore everything by default
-*
-
-# Allow top-level files
-!.gitignore
-!README.md
-!docker-compose.yml
-
-# Allow GitHub Actions workflows
-!.github/
-!.github/**
-
-# Allow parent directories explicitly
-!app/
-!app/public/
+# ─── Ignore all LocalWP WordPress core files ─────────────────────────
+app/public/*
+app/public/wp-content/ai1wm-backups/
 !app/public/wp-content/
-!app/public/wp-content/react-app/
-!app/public/wp-content/react-app/Dockerfile
+# Ignore default WP themes
+app/public/wp-content/themes/twenty*/
 
-# Allow React app, including Dockerfile
-!app/public/wp-content/react-app/
-!app/public/wp-content/react-app/**
+# Ignore all plugins by default
+app/public/wp-content/plugins/*
 
-# Same for deploy script
-!app/public/wp-content/react-app/deploy-react.sh
-
-# Allow your plugin
-!app/public/wp-content/plugins/kuku-pinecone-of-the-day/
+# Allow only your custom plugin
+!app/public/wp-content/plugins/sheet-sync-endpoint/**
 !app/public/wp-content/plugins/kuku-pinecone-of-the-day/**
 
-# Allow your custom theme
+# Allow everything in kuku-child theme except react-build
 !app/public/wp-content/themes/kuku-child/
-!app/public/wp-content/themes/kuku-child/**
+!app/public/wp-content/themes/kuku-child/*
+!app/public/wp-content/themes/kuku-child/**/*
+app/public/wp-content/themes/kuku-child/react-build/
 
-# Allow minimal WP scaffolding
+# ─── Allow specific tracked files in wp-content ──────────────────────
+!app/public/wp-content/react-app/**
 !app/public/wp-content/db.php
 !app/public/wp-content/index.php
 
-# Exclude unnecessary files/folders
-**/node_modules/
-**/.pnp/
-**/.pnp.js
-**/coverage/
-**/.next/
-**/build/
-**/.env*
+# ─── Allow GitHub Actions, top-level files ───────────────────────────
+!.github/
+!.github/**
+!README.md
+!docker-compose.yml
+
+# ─── Ignore WordPress runtime and dev artifacts ──────────────────────
+*.log
+*.sql
+*.zip
+.env*
+local-settings.php
+app/sql/
+app/conf/
+app/logs/
 **/uploads/
 **/cache/
 **/upgrade/
 **/advanced-cache.php
 **/object-cache.php
-*.log
-
-# Ignore common bundled WP plugins and themes
-**/wp-content/plugins/all-in-one-wp-migration/
-**/wp-content/plugins/query-monitor/
-**/wp-content/plugins/redis-cache/
-**/wp-content/themes/twenty*/
+**/node_modules/
+**/build/

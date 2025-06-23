@@ -27,27 +27,19 @@ add_action('rest_api_init', function () {
 function kuku_fetch_random_pinecone() {
     // Directory containing pine cone images in the active child theme
     $image_dir = get_stylesheet_directory() . '/assets/pinecones/';
-    error_log('📁 Image directory path: ' . $image_dir);
+    $image_url_base = get_stylesheet_directory_uri() . '/assets/pinecones/';
 
     // Get all image files with the specified extensions
-    $images = glob($image_dir . '*.{jpg,png,jpeg}', GLOB_BRACE);
-    error_log('🖼️ Found images: ' . print_r($images, true));
-
+    $images = glob($image_dir . '*.{jpg,jpeg,png,gif}', GLOB_BRACE);
     // If no images are found, return a default image URL
-    if (!$images || count($images) === 0) {
-        error_log('🟡 No pinecone images found in local assets folder.');
+    if (!$images) {
         return 'https://media.istockphoto.com/id/505688040/photo/beautiful-fir-cone-isolated.jpg?s=612x612&w=0&k=20&c=g4SXX83g7pDO1792fXln9w3ypmOtG1a_B2ywpUDhxYo=';
     }
 
     // Randomly select an image from the list
-    $random_image = $images[array_rand($images)];
-    error_log('🌲 Randomly selected image: ' . $random_image);
-
+    $selected = basename($images[array_rand($images)]);
     // Construct the URL for the selected image
-    $url = str_replace('http://', 'https://', get_stylesheet_directory_uri()) . '/assets/pinecones/' . basename($random_image);
-    error_log('Local pinecone image URL: ' . $url);
-
-    return $url;
+    return $image_url_base . $selected;
 }
 
 // Save to option table daily
