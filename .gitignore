@@ -5,12 +5,12 @@ app/public/wp-content/ai1wm-backups/
 # Ignore default WP themes
 app/public/wp-content/themes/twenty*/
 
-# Ignore all plugins by default
+# Ignore all plugins except custom ones
 app/public/wp-content/plugins/*
-
-# Allow only your custom plugin
-!app/public/wp-content/plugins/sheet-sync-endpoint/**
+!app/public/wp-content/plugins/kuku-pinecone-of-the-day/
 !app/public/wp-content/plugins/kuku-pinecone-of-the-day/**
+!app/public/wp-content/plugins/sheet-sync-endpoint/
+!app/public/wp-content/plugins/sheet-sync-endpoint/**
 
 # Allow everything in kuku-child theme except react-build
 !app/public/wp-content/themes/kuku-child/

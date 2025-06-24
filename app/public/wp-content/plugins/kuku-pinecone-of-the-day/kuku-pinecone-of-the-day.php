@@ -27,7 +27,12 @@ add_action('rest_api_init', function () {
 function kuku_fetch_random_pinecone() {
     // Directory containing pine cone images in the active child theme
     $image_dir = get_stylesheet_directory() . '/assets/pinecones/';
-    $image_url_base = get_stylesheet_directory_uri() . '/assets/pinecones/';
+    $uri = get_stylesheet_directory_uri();
+    if (!is_ssl()) {
+        $uri = str_replace('https://', 'http://', $uri);
+    }
+    $image_url_base = $uri . '/assets/pinecones/';
+
 
     // Get all image files with the specified extensions
     $images = glob($image_dir . '*.{jpg,jpeg,png,gif}', GLOB_BRACE);

@@ -37,11 +37,28 @@ function PineConeOfTheDay() {
   return (
     <div>
       <h2>Pine Cone of the Day 🌲</h2>
-      <img
-        src={pineconeUrl}
-        alt="Pine Cone of the Day"
-        style={{ width: "300px", borderRadius: "8px" }}
-      />
+
+      {/* Show image if available */}
+      {pineconeUrl ? (
+        <img
+          src={pineconeUrl}
+          alt="Pine Cone of the Day"
+          style={{ width: "300px", borderRadius: "8px" }}
+          onError={() => setError(true)} // fallback if image fails to load
+        />
+      ) : null}
+
+      {/* If error or image load fails, show direct link */}
+      {error && pineconeUrl && (
+        <p>
+          ⚠️ Couldn’t load the image.{" "}
+          <a href={pineconeUrl} target="_blank" rel="noopener noreferrer">
+            Click here to open it directly
+          </a>
+          .
+        </p>
+      )}
+
       <p>Last updated: {new Date().toLocaleDateString()}</p>
     </div>
   );
