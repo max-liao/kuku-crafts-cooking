@@ -1,0 +1,50 @@
+name: Frontend CD
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "app/public/wp-content/react-app/**"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔐 Decode SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "$LIGHTSAIL_SSH_KEY" | base64 -d > ~/.ssh/lightsail_key.pem
+          chmod 600 ~/.ssh/lightsail_key.pem
+        env:
+          LIGHTSAIL_SSH_KEY: ${{ secrets.LIGHTSAIL_SSH_KEY }}
+
+      - name: 📁 Copy deploy script and Docker context
+        run: |
+          mkdir -p ./deploy-context/app/public/wp-content/react-app
+          mkdir -p ./deploy-context/app/public/wp-content/themes/kuku-child
+
+          cp ./deploy-react.sh ./deploy-context/deploy-react.sh
+          cp ./docker-build-react.sh ./deploy-context/docker-build-react.sh
+
+          cp -r ./app/public/wp-content/react-app/* ./deploy-context/app/public/wp-content/react-app/
+          cp ./app/public/wp-content/themes/kuku-child/functions.php ./deploy-context/app/public/wp-content/themes/kuku-child/functions.php
+
+          chmod +x ./deploy-context/deploy-react.sh
+          chmod +x ./deploy-context/docker-build-react.sh
+
+      - name: 🚀 Deploy to Lightsail
+        working-directory: ./deploy-context
+        env:
+          LIGHTSAIL_IP: ${{ secrets.LIGHTSAIL_IP }}
+          PEM_PATH: ~/.ssh/lightsail_key.pem
+        run: ./deploy-react.sh
+
+      - name: ✅ Confirm React build exists
+        working-directory: ./deploy-context
+        run: |
+          test -f ./app/public/wp-content/themes/kuku-child/react-build/index.html
