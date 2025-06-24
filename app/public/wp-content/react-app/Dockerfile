@@ -1,16 +1,17 @@
-# Use an official Node image to build the app
+# ─── Stage 1: Build ─────────────────────────────
 FROM node:18 AS builder
 
 WORKDIR /app
-RUN apt-get update && apt-get install -y rsync
-
 COPY . .
 
-RUN npm install && npm run build
+# Install rsync for use in post-build step
+RUN apt-get update && apt-get install -y rsync
 
-# Serve using Nginx
-FROM nginx:alpine
-COPY --from=builder /app/build /usr/share/nginx/html
+RUN npm ci
+RUN npm run build
 
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+# ─── Stage 2: (optional) Serve with Nginx or just export ───────
+# FROM nginx:alpine
+# COPY --from=builder /app/build /usr/share/nginx/html
+# EXPOSE 80
+# CMD ["nginx", "-g", "daemon off;"]
